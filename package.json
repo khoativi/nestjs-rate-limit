@@ -1,6 +1,9 @@
 {
   "name": "@khoativi/nestjs-rate-limit",
   "version": "1.0.0",
+  "publishConfig": {
+    "access": "public"
+  },
   "description": "A flexible and efficient rate limiting library for NestJS that supports multiple storage backends (Redis via ioredis and Valkey), with customizable keys and error handling.",
   "author": "Khoa Tran <khoatv.cntt@gmail.com>",
   "private": false,
