@@ -52,9 +52,9 @@ You can configure the module using `forRoot` or `forRootAsync`.
 ```ts
 // redis.config.ts
 import Redis from 'ioredis';
-import { IoredisAdapter } from '@khoativi/nestjs-rate-limit';
+import { RedisAdapter } from '@khoativi/nestjs-rate-limit';
 
-export const storeClient = new IoredisAdapter(
+export const storeClient = new RedisAdapter(
   new Redis({ host: 'localhost', port: 6379 })
 );
 ```
@@ -96,7 +96,7 @@ export const storeClient = new ValkeyAdapter(
 
 ```ts
 // rate-limit.config.ts
-import { RateLimitOptions, IoredisAdapter } from '@khoativi/nestjs-rate-limit';
+import { RateLimitOptions, RedisAdapter } from '@khoativi/nestjs-rate-limit';
 import Redis from 'ioredis';
 
 export const rateLimitConfig = async (): Promise<RateLimitOptions> => {
@@ -104,7 +104,7 @@ export const rateLimitConfig = async (): Promise<RateLimitOptions> => {
   return {
     duration: 30,
     limit: 5,
-    storeClient: new IoredisAdapter(redisClient),
+    storeClient: new RedisAdapter(redisClient),
     errorMessage: 'Too Many Requests',
     countAllRequests: true
   };
@@ -118,6 +118,7 @@ export const rateLimitConfig = async (): Promise<RateLimitOptions> => {
     ConfigModule.forRoot({ isGlobal: true }),
     RateLimitModule.forRootAsync({
       imports: [ConfigModule],
+      inject: [ConfigService],
       useFactory: rateLimitConfig
     })
   ],
@@ -158,7 +159,7 @@ export class CustomRateLimitGuard extends RateLimitGuard {
    * This version uses the `authorization` header if available.
    */
   protected async getTracker(req: any): Promise<string> {
-    return req.headers?.authorization ?? super.getTracker(req);
+    return req.headers?.authorization;
   }
 
   /**
